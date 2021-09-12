@@ -59,9 +59,6 @@
     #define debugln(x)
 #endif
 
-/* Latitude and Longititude */
-static float latitude    = 51.1497923;
-static float longititude = -0.23745;
 
 //51.1497923,-0.23745
 
