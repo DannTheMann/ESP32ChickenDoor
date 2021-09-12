@@ -4,6 +4,7 @@
 #include <DoorHandler.h>
 #include "EEPROM.h"
 
+#define VERSION "1.1"
 /* Network credentials */
 #define BACK_UP_WIFI        "Farm WiFi"
 #define NETWORK_SSID        "Goats"
@@ -111,7 +112,8 @@ void setup()
         Serial.println();
     #endif
 
-    debugln("Setup()");
+    debug("Setup() Version ");
+    debugln(VERSION);
 
     pinMode(ONBOARDLED, OUTPUT);
 
