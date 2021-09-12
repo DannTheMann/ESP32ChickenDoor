@@ -554,7 +554,7 @@ bool DoorHandler::checkTime(bool dayOrNight)
         /* sunrisemins <= time <= sunsetmins */
         return m_minuteToOpen <= currentMinute && currentMinute <= m_minuteToClose;
     }
-    else if(dayOrNight == NIGHT)
+    else // if(dayOrNight == NIGHT)
     {
         /* e.g is 2AM less than 7AM, 6PM is greater than 5PM */
         /* sunrisemins > time > sunsetmins */
