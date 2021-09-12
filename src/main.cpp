@@ -300,8 +300,7 @@ bool interpretPacketCommand(ParameterBuffer pb)
         case '0': // disable/enable automation
             if(pb.hasParameter()) door.setAutomated(pb.getArgument());
             break;
-        case '1': // disable/enable LDR
-             if(pb.hasParameter()) door.setAutomated(pb.getArgument());
+        case '1': // unused
             break;
         case '2': // move door
              if(pb.hasParameter()) moveDoor(pb.getArgument());
@@ -321,6 +320,7 @@ bool interpretPacketCommand(ParameterBuffer pb)
         case '8': // add time to door closing time
             if(pb.hasParameter()) door.setDoorCloseTime(pb.getArgument());
             break;
+        case '9': // unused
             break;
         case 'a': // disable automation delay (Door will 'refresh')
             automationDelay = 0;
