@@ -318,11 +318,9 @@ bool interpretPacketCommand(ParameterBuffer pb)
         case '7': // set door ID
             if(pb.hasParameter()) door.setDoorId(pb.getArgument());
             break;
-        case '8': // raise door open time
-            if(pb.hasParameter()) door.setDoorOpenTime(pb.getArgument());
+        case '8': // add time to door closing time
+            if(pb.hasParameter()) door.setDoorCloseTime(pb.getArgument());
             break;
-        case '9': // lower door open time
-            if(pb.hasParameter()) door.setDoorOpenTime(pb.getArgument()*-1);
             break;
         case 'a': // disable automation delay (Door will 'refresh')
             automationDelay = 0;

@@ -189,12 +189,9 @@ uint8_t DoorHandler::setMotorMoveSpeed(uint8_t value)
     return m_motorMoveTime;
 }
 
-void DoorHandler::setDoorOpenTime(uint8_t value)
+void DoorHandler::setDoorCloseTime(uint8_t value)
 {
-    int16_t tmp = m_minuteOffset + value;
-    if(value > 255)     m_minuteOffset = 255;
-    else if(value < 0)  m_minuteOffset = 0;
-    else                m_minuteOffset = value;
+    m_minuteOffset = value;
 }
 
 void DoorHandler::setTimeEnabled(bool flag)
@@ -613,17 +610,17 @@ void DoorHandler::calculateTimeToMove()
     if(m_minuteOffset > 125)
     {
         /* Add (value * 2) minutes to opening time */
-        m_minuteToOpen = movingTime.sunrise(year, month, day, dst) +(m_minuteOffset-100)*2;
+        m_minuteToOpen = movingTime.sunrise(year, month, day, dst);
     }
     else if(m_minuteOffset < 100)
     {
         /* Remove (value * 2) minutes to closing time */
-        m_minuteToOpen = movingTime.sunrise(year, month, day, dst) -(m_minuteOffset*2);
+        m_minuteToOpen = movingTime.sunrise(year, month, day, dst);
     }
     else
     {
         /* Value remains the same */
-        m_minuteToOpen = movingTime.sunrise(year, month, day, dst) ;   
+        m_minuteToOpen = movingTime.sunrise(year, month, day, dst);   
     }
 
     // char buf[6];
@@ -634,7 +631,7 @@ void DoorHandler::calculateTimeToMove()
     // debugln(buf);
 
     /* Sunset, add 30 as this is the offset to allow later sleepers */
-    m_minuteToClose = movingTime.sunset(year, month, day, dst);
+    m_minuteToClose = movingTime.sunset(year, month, day, dst) + m_minuteOffset;
     // movingTime.min2str(buf, m_minuteToClose);
     // debug("Sunset: (");
     // debug(m_minuteToClose);

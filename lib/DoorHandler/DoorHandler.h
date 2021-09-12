@@ -76,7 +76,7 @@ class DoorHandler{
         void setTimeEnabled(bool flag);
         void setAutomated (bool flag){m_automationEnabled=flag;}
         void setMotorSaved(bool flag);
-        void setDoorOpenTime(uint8_t time);
+        void setDoorCloseTime(uint8_t time);
         void forcedOpen();
         void forcedClosed();
 
