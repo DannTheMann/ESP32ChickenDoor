@@ -7,7 +7,7 @@
 #define VERSION "1.1"
 /* Network credentials */
 #define BACK_UP_WIFI        "Farm WiFi"
-#define NETWORK_SSID        "Goats"
+#define NETWORK_SSID        "Farm WiFi"
 #define SSID_KEY            "windacres"
 #define TARGET              "192.168.1.20"
 #define UDP_PORT            3333
@@ -365,6 +365,9 @@ bool interpretPacketCommand(ParameterBuffer pb)
              delay(1000);
              ESP.restart();
              break;
+        case 'v': // Time enable/disable
+             debugUpdate("interpretPacketCommand() Version=" VERSION);
+            break;
         case ILLEGAL_COMMAND:  // Unrecongised command
             debugln("interpretPacketCommand() Command received was invalid.");
             return false;
