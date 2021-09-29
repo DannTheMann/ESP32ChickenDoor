@@ -24,7 +24,7 @@
 #define MTR_STOP_TOP            2
 #define LIGHT_THRESHOLD_TOP     3
 #define LIGHT_THRESHOLD_BOTTOM  4
-#define OPEN_OFFSET             5
+#define CLOSE_OFFSET            5
 #define AUTOMATION_ENABLE       6
 #define LDR_ENABLE              7
 #define MOTOR_SAVED_ENABLE      8
@@ -42,7 +42,7 @@
 #define D_MTR_STOP_TOP            10
 #define D_LIGHT_THRESHOLD_TOP     37    // Assumed with 200k~ LDR and 10k resistor in voltage divider
 #define D_LIGHT_THRESHOLD_BOTTOM  25
-#define D_OPEN_OFFSET             0
+#define D_CLOSE_OFFSET            0
 #define D_AUTOMATION_ENABLE       true
 #define D_LDR_ENABLE              false
 #define D_MOTOR_SAVED_ENABLE      true
@@ -105,11 +105,6 @@ DoorHandler::DoorHandler(uint8_t mtrPin1, uint8_t mtrPin2, uint8_t encoderPin1, 
 
     m_closed = true;
     m_eepromNeedsSaving = false;
-    /* If the door lost power or became stuck try to close */
-    // if( isMoving() )
-    //     moveDoor(false);
-
-    // calculateTimeToMove();
 }
 
 void DoorHandler::configureNTP()
@@ -192,6 +187,7 @@ uint8_t DoorHandler::setMotorMoveSpeed(uint8_t value)
 void DoorHandler::setDoorCloseTime(uint8_t value)
 {
     m_minuteOffset = value;
+    saveSetting(CLOSE_OFFSET);
 }
 
 void DoorHandler::setTimeEnabled(bool flag)
@@ -383,6 +379,7 @@ DoorHandler::Response DoorHandler::getState()
 
 bool DoorHandler::poll()
 {
+    static uint8_t timeCalculation = 0;
     //printLocalTime();
 
     // debug("Date: ");
@@ -405,7 +402,7 @@ bool DoorHandler::poll()
         return true;
     }
 
-    calculateTimeToMove();
+    if((timeCalculation++)%10==0) calculateTimeToMove();
 
     /* If automation is disabled OR neither sensor/time is enabled */
     if( ! isAutomated() || ( !m_ldrEnabled && !m_timeEnabled ))
@@ -600,28 +597,16 @@ void DoorHandler::printLocalTime()
 
 void DoorHandler::calculateTimeToMove()
 {
-
+    debug("calculateTimeToMove() Calcuating time to move, open=");
     int year  = getTimeValue(YEAR);
     int month = getTimeValue(MONTH);
     int day   = getTimeValue(TDAY);
     int dst   = getTimeValue(DST);
 
-    /* Allows for variance in opening time to stop loud chickens */
-    if(m_minuteOffset > 125)
-    {
-        /* Add (value * 2) minutes to opening time */
-        m_minuteToOpen = movingTime.sunrise(year, month, day, dst);
-    }
-    else if(m_minuteOffset < 100)
-    {
-        /* Remove (value * 2) minutes to closing time */
-        m_minuteToOpen = movingTime.sunrise(year, month, day, dst);
-    }
-    else
-    {
-        /* Value remains the same */
-        m_minuteToOpen = movingTime.sunrise(year, month, day, dst);   
-    }
+    /* Value remains the same */
+    m_minuteToOpen = movingTime.sunrise(year, month, day, dst);   
+    debug(m_minuteToOpen);
+    debug(", close=");
 
     // char buf[6];
     // movingTime.min2str(buf, m_minuteToOpen);
@@ -632,6 +617,7 @@ void DoorHandler::calculateTimeToMove()
 
     /* Sunset, add 30 as this is the offset to allow later sleepers */
     m_minuteToClose = movingTime.sunset(year, month, day, dst) + m_minuteOffset;
+    debugln(m_minuteToClose);
     // movingTime.min2str(buf, m_minuteToClose);
     // debug("Sunset: (");
     // debug(m_minuteToClose);
@@ -679,7 +665,7 @@ void DoorHandler::saveSetting(int choice)
         case LIGHT_THRESHOLD_BOTTOM:
             EEPROM.write(4, m_lightLowerThreshold);
             break;
-        case OPEN_OFFSET:
+        case CLOSE_OFFSET:
             EEPROM.write(5, m_minuteOffset);
             break;
         case AUTOMATION_ENABLE:
@@ -762,7 +748,7 @@ void DoorHandler::flash()
     EEPROM.write(2, D_MTR_STOP_TOP);
     EEPROM.write(3, D_LIGHT_THRESHOLD_TOP);
     EEPROM.write(4, D_LIGHT_THRESHOLD_BOTTOM);
-    EEPROM.write(5, D_OPEN_OFFSET);
+    EEPROM.write(5, D_CLOSE_OFFSET);
     EEPROM.write(6, D_AUTOMATION_ENABLE);
     EEPROM.write(7, D_LDR_ENABLE);
     EEPROM.write(8, D_MOTOR_SAVED_ENABLE);
@@ -773,7 +759,7 @@ void DoorHandler::flash()
     m_motorTopPosition    = D_MTR_STOP_TOP;
     m_lightUpperThreshold = D_LIGHT_THRESHOLD_TOP;
     m_lightLowerThreshold = D_LIGHT_THRESHOLD_BOTTOM;
-    m_minuteOffset        = D_OPEN_OFFSET;
+    m_minuteOffset        = D_CLOSE_OFFSET;
     m_automationEnabled   = D_AUTOMATION_ENABLE;
     m_ldrEnabled          = D_LDR_ENABLE;
     m_motorPositionSaved  = D_MOTOR_SAVED_ENABLE;

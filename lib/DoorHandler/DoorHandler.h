@@ -35,10 +35,10 @@ class DoorHandler{
                         uint8_t minuteOffset)
                 {
 
-                    m_length = sprintf(m_buffer, "!ID=%d,STATE=%d,MTR_POS=%d,TOPPOS=%d,UL=%d,LL=%d,LIT=%d,AUTO=%d,LDR=%d,TIME=%d,MTRSAVE=%d,MTRTIME=%d,CLOSE=%d,OPEN=%d,MOFF=%d",
+                    m_length = sprintf(m_buffer, "!ID=%d,STATE=%d,MTR_POS=%d,TOPPOS=%d,UL=%d,LL=%d,LIT=%d,AUTO=%d,LDR=%d,TIME=%d,MTRSAVE=%d,MTRTIME=%d,CLOSE=%d,OPEN=%d,C+OFF=%d,MOFF=%d",
                      id, state, mtrPos, mtrTopPos, mtrUpperLight, mtrLowerLight,
                      currentLight, automated, ldrEnabled, timeEnabled, motorSaved, motorTime,
-                     closingTimeMinute, openingTimeMinute, minuteOffset*2);
+                     closingTimeMinute-minuteOffset, openingTimeMinute, closingTimeMinute, minuteOffset);
 
                 }
                 char* getResponse(){return m_buffer;}
