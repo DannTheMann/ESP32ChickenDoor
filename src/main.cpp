@@ -7,7 +7,7 @@
 #define VERSION "1.1"
 /* Network credentials */
 #define BACK_UP_WIFI        "Farm WiFi"
-#define NETWORK_SSID        "Farm WiFi"
+#define NETWORK_SSID        "Goats"
 #define SSID_KEY            "windacres"
 #define TARGET              "192.168.1.20"
 #define UDP_PORT            3333
